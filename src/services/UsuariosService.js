@@ -2,9 +2,8 @@ import Usuario from "../models/Usuario.js";
 import {v1 as uuidv1} from "uuid";
 
 class UsuariosService{
-    async criarUsuario(fields){
+    async criarUsuario({nome, endereco, email, dtNasc, senha}){
 
-        const {nome, endereco, email, dtNasc, senha} = fields;
         const id = uuidv1();
         const userObj = {
             id,
@@ -39,6 +38,25 @@ class UsuariosService{
             console.log(error);
             throw new Error('Erro ao buscar usuario');
         }
+    }
+
+    async login({email, senha}){
+        try{
+            const usuario = await Usuario.findOne({
+                where:{
+                    email, 
+                    senha
+                },
+                attributes:['id', 'nome', 'endereco', 'dtNasc', 'email']
+            })
+
+            return usuario;
+        
+        }catch(error){
+            console.log(error);
+            throw new Error("Erro ao tentar fazer o login");
+        }
+        
     }
 }
 

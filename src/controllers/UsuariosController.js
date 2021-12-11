@@ -29,3 +29,28 @@ export async function buscarUsuario(req, res){
         })
     }
 }
+
+export async function realizarLogin(req, res){
+    try{
+        const usuario = await UsuariosService.login(req.body);
+        if(usuario){
+            res.json({
+                message:"Usuario logado com sucesso",
+                data:usuario,
+            });
+            return;
+        }
+
+        res.status(401).json({
+            message:"Email ou senha inválidos",
+            data:{},
+        })
+        
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}
