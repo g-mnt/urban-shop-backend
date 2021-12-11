@@ -4,7 +4,7 @@ import morgan from 'morgan';
 //importando rotas
 import usuariosRoutes from "./routes/usuarios.js";
 import produtosRoutes from "./routes/produtos.js";
-
+import pedidosRoutes from "./routes/pedidos.js";
 const app = express();
 const PORT = 5000;
 
@@ -17,4 +17,5 @@ app.use(json({limit: '500mb'}));
 //rotas
 app.use('/Usuarios', usuariosRoutes);
 app.use('/Produtos', produtosRoutes);
+app.use('/Pedidos', pedidosRoutes);
 

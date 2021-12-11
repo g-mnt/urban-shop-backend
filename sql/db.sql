@@ -21,5 +21,19 @@ CREATE TABLE IF NOT EXISTS produto_foto(
     principal BOOLEAN DEFAULT false
 )
 
+CREATE TABLE IF NOT EXISTS pedidos(
+    id Uuid PRIMARY KEY,
+    idUsuario Uuid REFERENCES usuarios(id) NOT NULL,
+    dtPedido DATE NOT NULL,
+    valorTotal DECIMAL NOT NULL,
+    status TEXT NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS pedido_produto(
+    idProduto Uuid REFERENCES produtos(id),
+    idPedido Uuid REFERENCES pedidos(id) NOT NULL,
+    quantidade INTEGER NOT NULL
+)
+
 
 
