@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS usuarios(
     email TEXT NOT NULL,
     endereco TEXT NOT NULL,
     senha TEXT NOT NULL,
-    dtNasc DATE NOT NULL,
+    dtNasc DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS produtos(
@@ -12,14 +12,14 @@ CREATE TABLE IF NOT EXISTS produtos(
     nome TEXT NOT NULL,
     descricao TEXT NOT NULL,
     preco DECIMAL NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS produto_foto(
     id Uuid PRIMARY KEY,
     idProduto Uuid REFERENCES produtos(id),
-    img BLOB NOT NULL,
+    img BYTEA NOT NULL,
     principal BOOLEAN DEFAULT false
-)
+);
 
 CREATE TABLE IF NOT EXISTS pedidos(
     id Uuid PRIMARY KEY,
@@ -27,13 +27,15 @@ CREATE TABLE IF NOT EXISTS pedidos(
     dtPedido DATE NOT NULL,
     valorTotal DECIMAL NOT NULL,
     status TEXT NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS pedido_produto(
     idProduto Uuid REFERENCES produtos(id),
     idPedido Uuid REFERENCES pedidos(id) NOT NULL,
     quantidade INTEGER NOT NULL
-)
+);
+
+
 
 
 
