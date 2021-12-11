@@ -42,3 +42,42 @@ export async function buscarTodosPedidos(req, res){
         })
     }
 }
+
+export async function atualizarDadosPedido(req, res){
+    try{
+        const pedido = await PedidoService.atualizarDadosPedido(req.body);
+        res.json(pedido);
+    }catch(error){
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}
+
+export async function atualizarStatusPedido(req, res){
+    try{
+        const pedido = await PedidoService.atualizarStatusPedido(req.body);
+        res.json(pedido);
+    }catch(error){
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}
+
+export async function deletarPedido(req, res){
+    const {id} = req.body;
+    try{
+        await PedidoService.deletarPedido(id);
+        res.json({
+            message: "Pedido deletado com sucesso",
+        })
+    }catch(error){
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}

@@ -54,3 +54,35 @@ export async function realizarLogin(req, res){
         })
     }
 }
+
+export async function atualizarUsuario(req, res){
+    try{
+        const usuario = await UsuariosService.atualizarUsuario(req.body);
+        res.json({
+            message: "Usuario alterado com sucesso",
+            data:usuario,
+        })
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}
+
+export async function deletarUsuario(req, res){
+    const {id} = req.body;
+    try{
+        await UsuariosService.deletarUsuario(id);
+        res.json({
+            message: "Usuario deletado com sucesso",
+        })
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            message:error.message,
+            data:{},
+        })
+    }
+}

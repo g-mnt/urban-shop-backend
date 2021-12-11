@@ -6,9 +6,8 @@ import moment from "moment";
 import {v1 as uuidv1} from "uuid";
 
 class PedidoService{
-    async criarPedido(fields){
+    async criarPedido({idusuario, valortotal, status, produtos}){
 
-        const {idusuario, valortotal, status, produtos} = fields;
         const id = uuidv1();
         const dtpedido = moment().format("YYYY-MM-DD");
         const pedidoObj = {
@@ -21,17 +20,7 @@ class PedidoService{
 
         try{
             await Pedido.create(pedidoObj);
-            for(const produto of produtos){
-                const {idproduto, quantidade} = produto; 
-
-                const pedidoProdutoObj = {
-                    idpedido:id,
-                    idproduto,
-                    quantidade,
-                }
-
-                await PedidoProduto.create(pedidoProdutoObj);
-            }
+            await this.criarPedidoProduto(produtos, id);
 
             pedidoObj.produtos = produtos;
             
@@ -39,6 +28,20 @@ class PedidoService{
         }catch(error){
             console.log(error);
             throw new Error('Erro ao cadastrar pedido');
+        }
+    }
+
+    async criarPedidoProduto(produtos, idpedido){
+        for(const produto of produtos){
+            const {idproduto, quantidade} = produto; 
+
+            const pedidoProdutoObj = {
+                idpedido,
+                idproduto,
+                quantidade,
+            }
+
+            await PedidoProduto.create(pedidoProdutoObj);
         }
     }
     
@@ -101,6 +104,84 @@ class PedidoService{
         }catch(error){
             console.log(error);
             throw new Error('Erro ao buscar todos os pedidos');
+        }
+    }
+
+    async atualizarDadosPedido({id, valortotal, produtos}){
+        const pedidoObj = {
+            valortotal
+        }
+        try{
+            const updateReturn = await Pedido.update(pedidoObj, {
+                where:{
+                    id
+                }
+            });
+            if(updateReturn[0] > 0){
+                //removendo os produtos para cadastrar novamente;
+                await PedidoProduto.destroy({
+                    where:{
+                        idpedido: id,
+                    }
+                });
+
+                //colocando os novos produtos.
+                await this.criarPedidoProduto(produtos, id);
+
+                return await this.buscarPedido(id);
+            }
+
+
+        }catch(error){
+            console.log(error);
+            throw new Error('Erro ao atualizar o pedido');
+        }
+
+        //se chegou aqui é porque o pedido não existe, já que nenhum foi alterado e não teve erro na alteração.
+        throw new Error('Pedido inexistente');
+    }
+
+    async atualizarStatusPedido({id, status}){
+        const pedidoObj = {
+            status
+        }
+
+        try{
+            const updateReturn = await Pedido.update(pedidoObj, {
+                where:{
+                    id
+                }
+            });
+
+            if(updateReturn[0] > 0){
+                return await this.buscarPedido(id);
+            }
+
+        }catch(error){
+            console.log(error);
+            throw new Error('Erro ao atualizar o pedido');
+        }
+
+        //se chegou aqui é porque o pedido não existe, já que nenhum foi alterado e não teve erro na alteração.
+        throw new Error('Pedido inexistente');
+    }
+
+    async deletarPedido(id){
+        try{
+            await PedidoProduto.destroy({
+                where:{
+                    idpedido:id,
+                }
+            })
+
+            await Pedido.destroy({
+                where:{
+                    id,
+                }
+            })
+        }catch(error){
+            console.log(error);
+            throw new Error('Erro ao deletar o pedido');
         }
     }
 }
